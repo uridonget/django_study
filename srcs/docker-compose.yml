@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  web:
+    container_name: django
+    build: ./web
+    env_file:
+      - .env
+    networks:
+      - intra
+    ports:
+      - "8000:8000"
+
+networks:
+    intra:
