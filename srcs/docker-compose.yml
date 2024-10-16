@@ -1,15 +1,31 @@
-version: '3'
+version: '3.8'
 
 services:
-  web:
-    container_name: django
-    build: ./web
-    env_file:
-      - .env
-    networks:
-      - intra
-    ports:
-      - "8000:8000"
+    db:
+        container_name: postgre
+        image: postgres:15
+        restart: always
+        env_file:
+            - .env
+        networks:
+            - intra
+        volumes:
+            - pgdata:/var/lib/postgresql/data
 
+    web:
+        container_name: django
+        build: ./web
+        env_file:
+            - .env
+        networks:
+            - intra
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+    
 networks:
     intra:
+
+volumes:
+    pgdata:
