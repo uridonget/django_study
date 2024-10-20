@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+    db:
+        container_name: postgre
+        image: postgres:15
+        restart: always
+        env_file:
+            - .env
+        networks:
+            - intra
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+    django:
+        container_name: django
+        build: ./django
+        env_file:
+            - .env
+        networks:
+            - intra
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+    
+networks:
+    intra:
+
+volumes:
+    pgdata:

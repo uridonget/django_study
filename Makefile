@@ -1,15 +1,18 @@
-all : up
+all: build up
 
-up :
-	docker-compose -f srcs/docker-compose.yml up --build
+build:
+	docker-compose -f myproject/docker-compose.yml build
 
-down :
-	docker-compose -f srcs/docker-compose.yml down
+up:
+	docker-compose -f myproject/docker-compose.yml up
 
-clean : down
+down:
+	docker-compose -f myproject/docker-compose.yml down
+
+clean: down
 	docker stop $$(docker ps -q); \
 	docker image rmi -f $$(docker image ls -q); \
 	docker volume rm $$(docker volume ls -q); \
 	docker builder prune -f
 
-.PHONY : all up down clean
+.PHONY: all build up down clean
