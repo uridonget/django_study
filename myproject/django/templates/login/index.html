@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page Title</title>
+</head>
+<body>
+    <h2>Index Page Body</h2>
+    
+    {% if request.session.user_id %}
+        <!-- 로그인되어 있으면 game log 링크만 표시 -->
+        <a href="{% url 'game_log' %}">game log</a>
+    {% else %}
+        <!-- 로그인되지 않았으면 login oauth 링크만 표시 -->
+        <a href="{% url 'login_oauth' %}">Login with 42</a>
+    {% endif %}
+    
+</body>
+</html>

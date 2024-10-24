@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 확인</title>
+</head>
+<body>
+    <h2>회원가입 확인</h2>
+    <p>{{ user_info.login }} ({{ user_info.email }}) 님, 회원가입 하시겠습니까?</p>
+    <form method="post" action="{% url 'signup_confirm' %}">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ user_info.login }}">
+        <input type="hidden" name="email" value="{{ user_info.email }}">
+        <button type="submit">OK</button>
+    </form>
+    <form method="get" action="{% url 'index' %}">
+        <button type="submit">No</button>
+    </form>
+</body>
+</html>

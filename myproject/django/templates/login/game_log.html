@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Games</title>
+</head>
+<body>
+    <h2>Recent Games</h2>
+    <a href="{% url 'create_game_log' %}">Create Game Log!</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>User A</th>
+                <th>User A Score</th>
+                <th>User B</th>
+                <th>User B Score</th>
+                <th>Game Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in recent_games %}
+            <tr>
+                <td>{{ game.user_a }}</td>
+                <td>{{ game.user_a_score }}</td>
+                <td>{{ game.user_b }}</td>
+                <td>{{ game.user_b_score }}</td>
+                <td>{{ game.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No games found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
