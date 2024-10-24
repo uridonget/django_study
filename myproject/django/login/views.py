@@ -1,45 +1,21 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import JsonResponse
 import os
-from .forms import GameLogForm
-from .models import User,GameLog
+from .models import User
 from django.conf import settings
 import requests
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
-    return render(request, 'login/index.html')
-
-def game_log(request):
-    recent_games = GameLog.objects.order_by('-created_at')[:10]
-    return render(request, 'login/game_log.html', {'recent_games': recent_games})
-
-def create_game_log(request):
-    if request.method == 'POST':
-        form = GameLogForm(request.POST)
-        if form.is_valid():
-            user_a = form.cleaned_data['user_a']
-            user_b = form.cleaned_data['user_b']
-            user_a_score = form.cleaned_data['user_a_score']
-            user_b_score = form.cleaned_data['user_b_score']
-
-            # GameLog에 데이터 저장
-            game_log = GameLog.objects.create(
-                user_a=user_a,
-                user_b=user_b,
-                user_a_score=user_a_score,
-                user_b_score=user_b_score
-            )
-            game_log.save()
-            return redirect('game_log_success')  # 성공 후 이동할 페이지
-
+    # 세션에 user_id가 있는지 확인하여 로그인 여부를 판단
+    if request.session.get('user_id'):
+        # 로그인되어 있으면 'lobby:index'로 리디렉션
+        return redirect(reverse('lobby:index'))
     else:
-        form = GameLogForm()
-
-    return render(request, 'login/create_game_log.html', {'form': form})
-
-def game_log_success(request):
-    return render(request, 'login/game_log_success.html')
+        # 로그인되지 않았으면 login 페이지 렌더링
+        return render(request, 'login/index.html')
 
 def login_oauth(request):
     client_id = os.environ.get('CLIENT_ID')
@@ -64,7 +40,6 @@ def oauth_callback(request):
         'code': code,
         'redirect_uri': redirect_uri
     })
-
     if response.status_code == 200:
         access_token = response.json().get('access_token')
 
@@ -78,14 +53,12 @@ def oauth_callback(request):
             user = User.objects.get(username=user_info['login'])
             # 유저가 이미 존재하는 경우, 로그인 처리
             request.session['user_id'] = user.id
-            return redirect('index')
+            return redirect('lobby:index')
         except User.DoesNotExist:
             # 유저가 존재하지 않는 경우, 회원가입 여부 확인 페이지로 이동
             return render(request, 'login/signup_confirm.html', {'user_info': user_info})
     else:
         return render(request, 'error.html', {'message': 'OAuth authentication failed.'})
-    
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def signup_confirm(request):
@@ -97,6 +70,6 @@ def signup_confirm(request):
         user = User.objects.create(username=username, email=email)
         request.session['user_id'] = user.id
 
-        return redirect('index')
+        return redirect(reverse('lobby:index'))
     else:
         return render(request, 'error.html', {'message': 'Invalid request'})
