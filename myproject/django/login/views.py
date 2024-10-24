@@ -66,10 +66,16 @@ def signup_confirm(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
 
-        # 새로운 유저 생성
-        user = User.objects.create(username=username, email=email)
+        # 유저 생성
+        user, created = User.objects.get_or_create(username=username, defaults={'email': email})
+        
+        # 세션 설정
         request.session['user_id'] = user.id
 
-        return redirect(reverse('lobby:index'))
+        # 원하는 URL로 리디렉트
+        return redirect('lobby:index')
+        # return render(request, 'lobby/index.html')
     else:
-        return render(request, 'error.html', {'message': 'Invalid request'})
+        # GET 요청의 경우 다른 처리
+        return redirect('login:index')
+        # return render(request, 'login/index.html')
