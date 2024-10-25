@@ -7,7 +7,7 @@
 </head>
 <body>
     <h2>Recent Games</h2>
-    <a href="{% url 'lobby:create_game_log' %}">Create Game Log!</a>
+    <a href="#" id="createGameLogLink">Create Game Log!</a>
     <table border="1">
         <thead>
             <tr>
@@ -34,5 +34,27 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        // DOM이 로드된 후 실행되는 로직
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create Game Log 링크 클릭 시 JWT를 확인하고 없으면 리디렉션
+            const createGameLogLink = document.getElementById('createGameLogLink');
+            createGameLogLink.addEventListener('click', (event) => {
+                // 세션 스토리지에서 JWT 확인
+                const token = sessionStorage.getItem('access_token');
+                
+                if (!token) {
+                    // 토큰이 없는 경우 로그인 페이지로 리디렉션
+                    event.preventDefault();  // 기본 링크 동작을 막음
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '{% url "login:index" %}';
+                } else {
+                    // 토큰이 있는 경우에만 Create Game Log 페이지로 이동
+                    window.location.href = '{% url "lobby:create_game_log" %}';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

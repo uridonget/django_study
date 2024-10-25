@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     # 추가
     "login.apps.loginConfig",
     "lobby.apps.lobbyConfig",
+    "rest_framework",
+    "rest_framework_simplejwt",
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -135,3 +138,22 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # 엑세스 토큰의 유효 기간
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # 리프레시 토큰의 유효 기간
+    'ROTATE_REFRESH_TOKENS': True,  # 리프레시 토큰 갱신 시 새로운 토큰 발급 여부
+    'BLACKLIST_AFTER_ROTATION': True,  # 리프레시 토큰이 갱신된 이후 이전 토큰의 유효성 제거
+    'AUTH_HEADER_TYPES': ('Bearer',),  # HTTP 헤더에 사용될 타입
+}

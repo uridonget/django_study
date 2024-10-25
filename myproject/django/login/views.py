@@ -1,21 +1,17 @@
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import JsonResponse
 import os
 from .models import User
-from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
 import requests
 from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
-    # 세션에 user_id가 있는지 확인하여 로그인 여부를 판단
-    if request.session.get('user_id'):
-        # 로그인되어 있으면 'lobby:index'로 리디렉션
-        return redirect(reverse('lobby:index'))
-    else:
-        # 로그인되지 않았으면 login 페이지 렌더링
-        return render(request, 'login/index.html')
+    # 세션이 아닌 JWT로 로그인 여부를 판단해야 하므로,
+    # 클라이언트 측에서 JWT를 검증하는 로직을 작성하거나,
+    # 프론트엔드에서 로그인 상태를 유지하는 방식으로 변경 필요
+    return render(request, 'login/index.html')
 
 def login_oauth(request):
     client_id = os.environ.get('CLIENT_ID')
@@ -40,6 +36,7 @@ def oauth_callback(request):
         'code': code,
         'redirect_uri': redirect_uri
     })
+    print("response status code: ", response.status_code)
     if response.status_code == 200:
         access_token = response.json().get('access_token')
 
@@ -51,10 +48,20 @@ def oauth_callback(request):
 
         try:
             user = User.objects.get(username=user_info['login'])
-            # 유저가 이미 존재하는 경우, 로그인 처리
-            request.session['user_id'] = user.id
-            return redirect('lobby:index')
+            # 유저가 이미 존재하는 경우, JWT 발급
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            print("access_token: ", access_token)
+            print("refresh_token: ", refresh_token)
+
+            # 로그인 성공 후 JWT를 URL 파라미터로 전달하여 클라이언트가 세션 스토리지에 저장할 수 있도록 함
+            response = redirect(reverse('login:index'))
+            response['Location'] += f'?access={access_token}&refresh={refresh_token}'
+            return response
+
         except User.DoesNotExist:
+            print("User not exist in Database")
             # 유저가 존재하지 않는 경우, 회원가입 여부 확인 페이지로 이동
             return render(request, 'login/signup_confirm.html', {'user_info': user_info})
     else:
@@ -69,13 +76,17 @@ def signup_confirm(request):
         # 유저 생성
         user, created = User.objects.get_or_create(username=username, defaults={'email': email})
         
-        # 세션 설정
-        request.session['user_id'] = user.id
+        # 유저 생성 후 JWT 발급
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
 
-        # 원하는 URL로 리디렉트
-        return redirect('lobby:index')
-        # return render(request, 'lobby/index.html')
+        print("User Created!")
+        print("Access Token: ", access_token)
+        # 회원가입 성공 후 JWT를 URL 파라미터로 전달하여 클라이언트가 세션 스토리지에 저장할 수 있도록 함
+        response = redirect(reverse('login:index'))
+        response['Location'] += f'?access={access_token}&refresh={refresh_token}'
+        return response
     else:
         # GET 요청의 경우 다른 처리
         return redirect('login:index')
-        # return render(request, 'login/index.html')
