@@ -1,0 +1,6 @@
+Django==4.2.3
+psycopg2-binary==2.9.6
+requests
+axios
+djangorestframework 
+djangorestframework-simplejwt
