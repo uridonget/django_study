@@ -24,15 +24,7 @@ if (accessToken && refreshToken) {
     })
     .then(data => {
         if (data.valid) {
-            fetch('/lobby/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`, // Authorization 헤더에 Bearer 토큰 포함
-                    'Content-Type': 'application/json'
-                }
-            })
-            // window.location.href = "/lobby/";
-            // 로비창으로 이동을 하면서 request를 들고가고싶다.
+            window.location.href = "/lobby/";
         } else {
             sessionStorage.removeItem('access_token');
             sessionStorage.removeItem('refresh_token');
