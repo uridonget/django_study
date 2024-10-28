@@ -6,24 +6,9 @@
     <title>Index Page Title</title>
 </head>
 <body>
+    {% load static %}
     <h2>Index Page Body</h2>
     <a href="{% url 'login:login_oauth' %}">Login with 42</a>
-
-    <script>
-        // URL에서 JWT를 추출하여 세션 스토리지에 저장하는 로직
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get('access');
-        const refreshToken = urlParams.get('refresh');
-
-        if (accessToken && refreshToken) {
-            // 세션 스토리지에 토큰 저장
-            sessionStorage.setItem('access_token', accessToken);
-            sessionStorage.setItem('refresh_token', refreshToken);
-            console.log('Access token and refresh token stored in session storage.');
-
-            // 저장된 후 lobby:index로 리디렉트
-            window.location.href = "{% url 'lobby:index' %}";
-        }
-    </script>
+    <script src="{% static 'js/validateToken.js' %}"></script>
 </body>
 </html>

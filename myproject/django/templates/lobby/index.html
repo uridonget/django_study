@@ -3,45 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lobby</title>
+    <title>Welcome to the Lobby</title>
 </head>
 <body>
-    <h2>Lobby Index</h2>
-    <p>Welcome, {{ user.username }}! We're glad to have you here.</p>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const accessToken = sessionStorage.getItem('access_token');
-
-            if (!accessToken) {
-                alert('로그인이 필요합니다.');
-                window.location.href = '{% url "login:index" %}';
-            } else {
-                // 서버에 토큰 검증 요청
-                fetch('/lobby/verify_token/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => {
-                    if (response.status === 401) {
-                        console.error('Token verification failed:', response.status);
-                        alert('인증 실패. 다시 로그인 해주세요.');
-                        window.location.href = '{% url "login:index" %}';
-                    } else if (response.ok) {
-                        console.log('Token verified successfully');
-                    } else {
-                        console.error('Unexpected response:', response.status);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error during token verification:', error);
-                    alert('오류가 발생했습니다. 다시 시도해주세요.');
-                });
-            }
-        });
-    </script>
+    <h1>Welcome to the Lobby!</h1>
+    {% if user %}
+        <p>Hello, {{ user.username }}! We're glad to have you here.</p>
+    {% else %}
+        <p>Welcome! Please log in to access more features.</p>
+    {% endif %}
 </body>
 </html>
