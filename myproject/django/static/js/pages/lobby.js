@@ -1,7 +1,7 @@
-// about.js
+// lobby.js
 
-export function renderAboutPage() {
-    console.log("Rendering About Page...");
+export function renderLobbyPage() {
+    console.log("Rendering Lobby Page...");
 
     const app = document.getElementById('app');
 
@@ -20,10 +20,10 @@ export function renderAboutPage() {
 
     // 제목 및 콘텐츠 생성
     const title = document.createElement('h1');
-    title.textContent = 'About Page';
+    title.textContent = 'Lobby Page';
 
     const content = document.createElement('p');
-    content.textContent = '이것은 SPA의 About 페이지입니다.';
+    content.textContent = '이것은 SPA의 Lobby 페이지입니다.';
 
     // 요소 추가
     app.appendChild(header);

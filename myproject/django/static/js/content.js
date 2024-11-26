@@ -1,26 +1,24 @@
 // content.js
-import { getHomeContent } from './pages/home.js';
-import { getAboutContent } from './pages/about.js';
-import { getContactContent } from './pages/contact.js';
+import { renderHomePage } from './pages/home.js';
+import { renderAboutPage } from './pages/about.js';
+import { renderLobbyPage } from './pages/lobby.js';
 
 export function loadContent(path) {
     console.log(`Loading content for ${path}`);
 
-    const content = document.querySelector('main') || createMainContent();
-    content.innerHTML = ''; // 기존 콘텐츠 초기화
-
-    // URL에 따른 동적 콘텐츠 로드
-    if (path === '/about') {
-        content.innerHTML = getAboutContent();
-    } else if (path === '/contact') {
-        content.innerHTML = getContactContent();
+    if (path === '/') {
+        renderHomePage();
+    } else if (path === '/about') {
+        renderAboutPage();
+    } else if (path === '/lobby') {
+        renderLobbyPage();
     } else {
-        content.innerHTML = getHomeContent();
+        renderNotFoundPage();
     }
 }
 
-function createMainContent() {
-    const main = document.createElement('main');
-    document.body.appendChild(main);
-    return main;
+// 404 페이지 렌더링
+function renderNotFoundPage() {
+    const app = document.getElementById('app');
+    app.innerHTML = '<h1>404 - 페이지를 찾을 수 없습니다.</h1>';
 }
