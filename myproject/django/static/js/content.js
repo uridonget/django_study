@@ -1,6 +1,5 @@
 // content.js
 import { renderHomePage } from './pages/home.js';
-import { renderAboutPage } from './pages/about.js';
 import { renderLobbyPage } from './pages/lobby.js';
 
 export function loadContent(path) {
@@ -8,8 +7,6 @@ export function loadContent(path) {
 
     if (path === '/') {
         renderHomePage();
-    } else if (path === '/about') {
-        renderAboutPage();
     } else if (path === '/lobby') {
         renderLobbyPage();
     } else {

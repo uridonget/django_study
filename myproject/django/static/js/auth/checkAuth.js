@@ -5,11 +5,11 @@ export function isLoggedIn() {
     if (token) {
         // console.log('User is logged in.');
         alert('User is logged in.');
-        // return true;
+        return true;
     } else {
         // console.log('User is not logged in.');
         alert('User is not logged in.');
-        // return false;
+        return false;
     }
 }
 
